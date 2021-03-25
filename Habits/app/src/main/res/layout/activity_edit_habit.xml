@@ -65,14 +65,12 @@
                 android:id="@+id/habit_type_good"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/habit_type_good"
-                />
+                android:text="@string/habit_type_good" />
             <RadioButton
                 android:id="@+id/habit_type_bad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/habit_type_bad"
-                />
+                android:text="@string/habit_type_bad" />
         </RadioGroup>
 
         <EditText
@@ -83,21 +81,20 @@
             android:inputType="number"
             android:autofillHints="false" />
 
-        <EditText
+        <Spinner
             android:id="@+id/habit_period_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/habit_period_hint"
-            android:inputType="number"
-            android:autofillHints="false" />
+            android:layout_marginHorizontal="-5dp"
+            android:entries="@array/habit_periods" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="1"
-            android:gravity="center|bottom"
-            >
+            android:gravity="center|bottom">
             <Button
                 android:onClick="onSave"
                 android:layout_width="wrap_content"
