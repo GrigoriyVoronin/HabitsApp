@@ -18,11 +18,11 @@
     </string-array>
 
     <string-array name="habit_periods">
-        <item>В день</item>
-        <item>В неделю</item>
-        <item>В месяц</item>
-        <item>В квартал</item>
-        <item>В год</item>
+        <item>в день</item>
+        <item>в неделю</item>
+        <item>в месяц</item>
+        <item>в квартал</item>
+        <item>в год</item>
     </string-array>
 
     <string name="habit_type_good">Хорошая</string>
@@ -35,4 +35,7 @@
     <string name="habits_arr">Habits</string>
     <string name="habit">Habit</string>
     <string name="habit_id">Habit Id</string>
+    <string name="menu_item_main">Главная</string>
+    <string name="menu_item_about">О программе</string>
+    <string name="about_text">Приложение для отслеживания привычек</string>
 </resources>

@@ -1,77 +1,84 @@
 package doubletap.course.habits.activities
 
-import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
-import android.view.View
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import doubletap.course.habits.DataAdapter
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
+import com.google.android.material.navigation.NavigationView
 import doubletap.course.habits.R
+import doubletap.course.habits.fragments.*
 import doubletap.course.habits.models.Habit
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), HabitsListCallBack, EditHabitCallback, NavigationView.OnNavigationItemSelectedListener {
     companion object{
         const val HABITS_ARR = "HabitsArr"
         const val HABIT = "Habit"
         const val HABIT_ID = "HabitId"
+        const val HABITS_LIST_TAG = "HabitsListFragment"
+        const val EDIT_HABIT_TAG = "EditHabitFragment"
+        const val ABOUT_TAG = "AboutPageFragment"
+        const val HABIT_TYPE = "HabitType"
     }
 
-    private lateinit var viewAdapter: DataAdapter
-    private lateinit var viewManager: RecyclerView.LayoutManager
-    private var habits = mutableListOf<Habit>()
+    private val viewPagerFragment = ViewPagerFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (savedInstanceState != null)
-            habits = savedInstanceState.getParcelableArrayList<Parcelable>(HABITS_ARR) as MutableList<Habit>
-
-        viewManager = LinearLayoutManager(this)
-        viewAdapter = DataAdapter(habits)
-
-        habits_list_recycler_view.layoutManager = viewManager
-        habits_list_recycler_view.adapter = viewAdapter
+        val navView = findViewById<NavigationView>(R.id.navigation_drawer)
+        navView.setNavigationItemSelectedListener(this)
+        if (savedInstanceState == null)
+            setFragment(viewPagerFragment, HABITS_LIST_TAG)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onAddHabit() {
+        setFragment(EditHabitFragment(), EDIT_HABIT_TAG)
+    }
 
-        val habit = data?.getParcelableExtra<Habit>(HABIT)
-        if (habit != null) {
-            if (requestCode == 1) {
-                habits.add(habit)
-                viewAdapter.notifyItemInserted(habits.size - 1)
-            }
-            if (requestCode == 2) {
-                val oldHabit = habits.first { x -> x.Id == habit.Id }
-                val habitPosition = habits.indexOf(oldHabit)
-                habits[habitPosition] = habit
-                viewAdapter.notifyItemChanged(habitPosition)
-            }
+    override fun onEditHabit(habit: Habit) {
+        val fragment =EditHabitFragment.newInstance(habit)
+        setFragment(fragment, EDIT_HABIT_TAG)
+    }
+
+    override fun onSaveHabit(habit: Habit) {
+        val bundle = Bundle()
+        bundle.putParcelable(HABIT, habit)
+        viewPagerFragment.arguments = bundle
+        onBackPressed()
+    }
+
+    private fun setFragment(fragment: Fragment, tag: String) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment, tag)
+            .addToBackStack(tag)
+            .commit()
+    }
+
+    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
+        val fragment = selectDrawerItem(menuItem.itemId)
+        val tag = selectDrawerItemTag(menuItem.itemId)
+        setFragment(fragment, tag)
+        main_activity.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    private fun selectDrawerItem(itemId: Int): Fragment {
+        return when (itemId) {
+            R.id.menu_item_main -> viewPagerFragment
+            R.id.menu_item_about -> AboutPageFragment()
+            else -> throw IndexOutOfBoundsException()
         }
     }
 
-    fun onAddHabit(view: View) {
-        val intent = Intent(this, EditHabitActivity::class.java)
-        intent.putExtra(HABIT_ID, viewAdapter.getNextItemId())
-        startActivityForResult(intent, 1)
-    }
-
-    fun onEditHabit(view: View) {
-        val intent = Intent(this, EditHabitActivity::class.java)
-        val position = viewManager.getPosition(view)
-        val habit = viewAdapter.getHabitByPosition (position)
-        intent.putExtra(HABIT, habit)
-        startActivityForResult(intent, 2)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-
-        outState.putParcelableArrayList(HABITS_ARR, ArrayList<Parcelable>(habits));
+    private fun selectDrawerItemTag(itemId: Int): String {
+        return when (itemId) {
+            R.id.menu_item_main -> HABITS_LIST_TAG
+            R.id.menu_item_about -> ABOUT_TAG
+            else -> throw IndexOutOfBoundsException()
+        }
     }
 }

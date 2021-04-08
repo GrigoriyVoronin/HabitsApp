@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_menu"
+    app:startDestination="@+id/navigation_main">
+
+    <fragment
+        android:id="@+id/navigation_main"
+        android:name="doubletap.course.habits.fragments.ViewPagerFragment"
+        android:label="MainPage"
+        tools:layout="@layout/fragment_view_pager" />
+
+    <fragment
+        android:id="@+id/navigation_about"
+        android:name="doubletap.course.habits.fragments.AboutPageFragment"
+        android:label="AboutPage"
+        tools:layout="@layout/fragment_about_page" />
+</navigation>
